@@ -36,3 +36,14 @@ export interface Review {
   comment: string;
   date: string;
 }
+
+export type UserRole = 'admin' | 'user';
+
+export interface User {
+  id: string;
+  username: string;
+  password: string; // In a real app, never store plain text passwords!
+  name: string;
+  role: UserRole;
+  email?: string;
+}

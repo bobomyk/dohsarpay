@@ -1,5 +1,6 @@
 import React from 'react';
-import { Home, ShoppingBag, User, Search, LayoutGrid, BookOpen, LogIn, LogOut, ShieldCheck } from 'lucide-react';
+import { Home, ShoppingBag, User, Search, LayoutGrid, BookOpen, LogOut, ShieldCheck } from 'lucide-react';
+import { User as UserType } from '../types';
 
 interface NavbarProps {
   cartCount: number;
@@ -7,13 +8,15 @@ interface NavbarProps {
   onHomeClick: () => void;
   onOpenCategories: () => void;
   onLoginClick: () => void;
-  isAdmin: boolean;
+  currentUser: UserType | null;
   onLogout: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
-  cartCount, onOpenCart, onHomeClick, onOpenCategories, onLoginClick, isAdmin, onLogout 
+  cartCount, onOpenCart, onHomeClick, onOpenCategories, onLoginClick, currentUser, onLogout 
 }) => {
+  const isAdmin = currentUser?.role === 'admin';
+
   return (
     <>
       {/* Desktop Top Navbar */}
@@ -75,22 +78,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
               
-              {isAdmin ? (
-                 <button 
-                  onClick={onLogout}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-colors font-medium text-sm"
-                  title="Logout"
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
+              {currentUser ? (
+                <div className="flex items-center gap-3 pl-2 border-l border-gray-200">
+                    <div className="flex flex-col items-end hidden lg:flex">
+                        <span className="text-xs font-bold text-dark">{currentUser.name}</span>
+                        <span className="text-[10px] text-gray-500 capitalize">{currentUser.role}</span>
+                    </div>
+                    <button 
+                        onClick={onLogout}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                        title="Logout"
+                    >
+                        <LogOut size={20} />
+                    </button>
+                </div>
               ) : (
                 <button 
                   onClick={onLoginClick}
-                  className="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-full transition-colors"
-                  title="Admin Login"
+                  className="flex items-center gap-2 px-4 py-2 bg-dark text-white rounded-full hover:bg-gray-800 transition-colors text-sm font-bold shadow-md"
+                  title="Login / Sign Up"
                 >
-                  <User size={24} />
+                  <User size={18} />
+                  Login
                 </button>
               )}
             </div>
@@ -114,6 +123,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isAdmin && (
               <span className="text-[9px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
                 <ShieldCheck size={9} /> Admin
+              </span>
+            )}
+            {!isAdmin && currentUser && (
+              <span className="text-[9px] font-medium text-gray-500">
+                Hi, {currentUser.name.split(' ')[0]}
               </span>
             )}
           </div>
@@ -157,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="text-[10px] font-medium">Cart</span>
           </button>
           
-          {isAdmin ? (
+          {currentUser ? (
             <button 
               onClick={onLogout}
               className="flex flex-col items-center justify-center w-full h-full text-red-500 hover:text-red-600 space-y-1"

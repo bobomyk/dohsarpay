@@ -8,7 +8,7 @@ import { ChatBot } from './components/ChatBot';
 import { BookDetails } from './components/BookDetails';
 import { LoginModal } from './components/LoginModal';
 import { AdminBookForm } from './components/AdminBookForm';
-import { Book, CartItem } from './types';
+import { Book, CartItem, User } from './types';
 import { Plus } from 'lucide-react';
 
 // Mock Data (Initial State) - Burmese Books with Curated Covers
@@ -150,6 +150,17 @@ const INITIAL_BOOKS: Book[] = [
   }
 ];
 
+const INITIAL_USERS: User[] = [
+  {
+    id: 'admin-1',
+    username: 'admin',
+    password: 'admin123',
+    name: 'System Administrator',
+    role: 'admin',
+    email: 'admin@dohsarpay.com'
+  }
+];
+
 function App() {
   const [books, setBooks] = useState<Book[]>(INITIAL_BOOKS);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -162,9 +173,15 @@ function App() {
   const [view, setView] = useState<'home' | 'details'>('home');
   const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
 
-  // Admin State
-  const [isAdmin, setIsAdmin] = useState(false);
+  // User & Auth State
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // Derived Admin State
+  const isAdmin = currentUser?.role === 'admin';
+
+  // Admin Book Form State
   const [isAdminFormOpen, setIsAdminFormOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
@@ -255,17 +272,23 @@ function App() {
     setCartItems([]);
   };
 
-  // Admin Functions
-  const handleLogin = (success: boolean) => {
-    if (success) {
-      setIsAdmin(true);
-    }
+  // Auth Functions
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleSignup = (user: User) => {
+    setUsers(prev => [...prev, user]);
+    setCurrentUser(user);
+    setIsLoginModalOpen(false);
   };
 
   const handleLogout = () => {
-    setIsAdmin(false);
+    setCurrentUser(null);
   };
 
+  // Admin Functions
   const handleDeleteBook = (book: Book) => {
     if (window.confirm(`Are you sure you want to delete "${book.title}"?`)) {
       setBooks(prev => prev.filter(b => b.id !== book.id));
@@ -328,7 +351,7 @@ function App() {
         onOpenCategories={() => setIsCategoryOpen(true)}
         onHomeClick={() => window.location.hash = ''}
         onLoginClick={() => setIsLoginModalOpen(true)}
-        isAdmin={isAdmin}
+        currentUser={currentUser}
         onLogout={handleLogout}
       />
 
@@ -410,7 +433,7 @@ function App() {
         )}
       </main>
 
-      {/* Admin Floating Add Button (Mobile/Desktop) */}
+      {/* Admin Floating Add Button (Mobile/Desktop) - Only show for Admin role */}
       {isAdmin && view === 'home' && (
         <button
           onClick={handleCreateBook}
@@ -442,6 +465,8 @@ function App() {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={handleLogin}
+        onSignup={handleSignup}
+        users={users}
       />
 
       <AdminBookForm 
