@@ -30,6 +30,10 @@ export const BookDetails: React.FC<BookDetailsProps> = ({
   const [isAuthorBioOpen, setIsAuthorBioOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+  const discount = book.originalPrice && book.originalPrice > book.price 
+    ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
+    : 0;
+
   // Scroll to top on mount or when book changes
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -119,6 +123,13 @@ export const BookDetails: React.FC<BookDetailsProps> = ({
                   <div className="aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 relative group">
                       <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" />
                       
+                      {/* Discount Label */}
+                      {discount > 0 && (
+                        <div className="absolute top-4 left-4 bg-red-500 text-white font-bold px-3 py-1.5 rounded-full z-10 shadow-lg text-sm">
+                            SAVE {discount}%
+                        </div>
+                      )}
+
                       {/* Desktop Preview Button on Image Overlay */}
                       {book.previewPages && book.previewPages.length > 0 && (
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -148,7 +159,13 @@ export const BookDetails: React.FC<BookDetailsProps> = ({
                       </div>
                       {/* Desktop Price & Admin Actions */}
                       <div className="hidden md:block text-right">
-                          <div className="text-3xl font-bold text-primary">฿{book.price.toLocaleString()}</div>
+                          <div className="flex flex-col items-end">
+                            {book.originalPrice && book.originalPrice > book.price && (
+                                <span className="text-gray-400 line-through text-lg font-medium">฿{book.originalPrice.toLocaleString()}</span>
+                            )}
+                            <div className="text-3xl font-bold text-primary">฿{book.price.toLocaleString()}</div>
+                          </div>
+                          
                           <div className="flex items-center gap-1 justify-end mt-2 text-yellow-500">
                               <Star size={18} fill="currentColor" />
                               <span className="text-dark font-bold text-lg">{book.rating}</span>
@@ -173,9 +190,14 @@ export const BookDetails: React.FC<BookDetailsProps> = ({
                       <div className="flex items-center gap-1.5">
                           <Star size={20} className="text-yellow-500 fill-yellow-500" />
                           <span className="text-dark font-bold text-lg">{book.rating}</span>
-                          <span className="text-gray-400 text-sm">({reviews.length} reviews)</span>
+                          <span className="text-gray-400 text-sm">({reviews.length})</span>
                       </div>
-                      <div className="text-2xl font-bold text-primary">฿{book.price.toLocaleString()}</div>
+                      <div className="flex flex-col items-end leading-none">
+                        {book.originalPrice && book.originalPrice > book.price && (
+                            <span className="text-gray-400 line-through text-xs mb-1">฿{book.originalPrice.toLocaleString()}</span>
+                        )}
+                        <div className="text-2xl font-bold text-primary">฿{book.price.toLocaleString()}</div>
+                      </div>
                   </div>
 
                   {/* Mobile Preview Button */}

@@ -14,6 +14,10 @@ interface BookCardProps {
 export const BookCard: React.FC<BookCardProps> = ({ 
   book, onAddToCart, onBookClick, isAdmin, onEdit, onDelete 
 }) => {
+  const discount = book.originalPrice && book.originalPrice > book.price 
+    ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
+    : 0;
+
   return (
     <div 
       onClick={() => onBookClick(book)}
@@ -25,10 +29,19 @@ export const BookCard: React.FC<BookCardProps> = ({
           alt={book.title} 
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        
+        {/* Rating Badge */}
         <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm z-10">
           <Star size={12} className="text-yellow-500 fill-yellow-500" />
           <span className="text-xs font-bold">{book.rating}</span>
         </div>
+
+        {/* Discount Badge */}
+        {discount > 0 && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10 shadow-sm">
+            -{discount}%
+          </div>
+        )}
 
         {/* Admin Overlay Actions */}
         {isAdmin && (
@@ -61,7 +74,12 @@ export const BookCard: React.FC<BookCardProps> = ({
         <p className="text-gray-500 text-sm mb-3 line-clamp-1">{book.author}</p>
         
         <div className="mt-auto flex items-center justify-between">
-          <span className="text-lg font-bold text-dark">฿{book.price.toLocaleString()}</span>
+          <div className="flex flex-col leading-none">
+            {book.originalPrice && book.originalPrice > book.price && (
+               <span className="text-[10px] md:text-xs text-gray-400 line-through mb-0.5">฿{book.originalPrice.toLocaleString()}</span>
+            )}
+            <span className="text-lg font-bold text-dark">฿{book.price.toLocaleString()}</span>
+          </div>
           <button 
             onClick={(e) => {
               e.stopPropagation();

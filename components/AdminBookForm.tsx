@@ -18,6 +18,7 @@ export const AdminBookForm: React.FC<AdminBookFormProps> = ({
     title: '',
     author: '',
     price: 0,
+    originalPrice: 0,
     category: '',
     description: '',
     coverUrl: '',
@@ -38,6 +39,7 @@ export const AdminBookForm: React.FC<AdminBookFormProps> = ({
         title: '',
         author: '',
         price: 0,
+        originalPrice: 0,
         category: categories[1] || 'General',
         description: '',
         coverUrl: '',
@@ -52,7 +54,7 @@ export const AdminBookForm: React.FC<AdminBookFormProps> = ({
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'rating' ? parseFloat(value) : value
+      [name]: name === 'price' || name === 'rating' || name === 'originalPrice' ? parseFloat(value) : value
     }));
   };
 
@@ -205,7 +207,7 @@ export const AdminBookForm: React.FC<AdminBookFormProps> = ({
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Price (฿)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Sale Price (฿)</label>
                     <input 
                         type="number"
                         name="price"
@@ -214,6 +216,18 @@ export const AdminBookForm: React.FC<AdminBookFormProps> = ({
                         value={formData.price}
                         onChange={handleChange}
                         className="w-full p-3 border border-gray-200 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Original Price (Optional)</label>
+                    <input 
+                        type="number"
+                        name="originalPrice"
+                        min="0"
+                        value={formData.originalPrice || ''}
+                        onChange={handleChange}
+                        placeholder="e.g. 5000"
+                        className="w-full p-3 border border-gray-200 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-gray-50"
                     />
                 </div>
                 <div>
