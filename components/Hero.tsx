@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Flame } from 'lucide-react';
-import { Book } from '../types';
-import { BookCard } from './BookCard';
+import { Book } from '../types.ts';
+import { BookCard } from './BookCard.tsx';
 
 interface HeroProps {
   books: Book[];

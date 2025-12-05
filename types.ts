@@ -1,3 +1,4 @@
+
 export interface Book {
   id: number;
   title: string;
@@ -47,4 +48,19 @@ export interface User {
   name: string;
   role: UserRole;
   email?: string;
+}
+
+export type OrderStatus = 'completed' | 'pending' | 'cancelled';
+
+export interface Order {
+  id: string;
+  userId: string;
+  userName: string;
+  shippingName?: string;
+  shippingAddress?: string;
+  date: string;
+  total: number;
+  status: OrderStatus;
+  items: number; // count of items
+  paymentMethod: string;
 }

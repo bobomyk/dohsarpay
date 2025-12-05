@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Trash2, CreditCard, Smartphone, Banknote, QrCode, CheckCircle2 } from 'lucide-react';
-import { CartItem, PaymentMethod } from '../types';
+import { CartItem, PaymentMethod } from '../types.ts';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -8,14 +8,20 @@ interface CartDrawerProps {
   items: CartItem[];
   onRemoveItem: (id: number) => void;
   onUpdateQuantity: (id: number, delta: number) => void;
-  onClearCart: () => void;
+  onPlaceOrder: (details: { name: string; address: string; paymentMethod: string }) => void;
+  onClearCart?: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ 
-  isOpen, onClose, items, onRemoveItem, onUpdateQuantity, onClearCart
+  isOpen, onClose, items, onRemoveItem, onUpdateQuantity, onPlaceOrder, onClearCart
 }) => {
   const [step, setStep] = useState<'cart' | 'checkout' | 'success'>('cart');
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(PaymentMethod.PROMPTPAY);
+  
+  // Checkout Form State
+  const [shippingName, setShippingName] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
+  const [errors, setErrors] = useState<{name?: string, address?: string}>({});
 
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -24,11 +30,25 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   };
 
   const handlePlaceOrder = () => {
-    // Simulate API call
-    setTimeout(() => {
-      setStep('success');
-      onClearCart();
-    }, 1500);
+    // Basic validation
+    const newErrors: {name?: string, address?: string} = {};
+    if (!shippingName.trim()) newErrors.name = 'Name is required';
+    if (!shippingAddress.trim()) newErrors.address = 'Address is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Call parent handler
+    onPlaceOrder({
+      name: shippingName,
+      address: shippingAddress,
+      paymentMethod: selectedPayment
+    });
+
+    // Show success step
+    setStep('success');
   };
 
   const handleClose = () => {
@@ -37,6 +57,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     setTimeout(() => {
         setStep('cart');
         setSelectedPayment(PaymentMethod.PROMPTPAY);
+        setShippingName('');
+        setShippingAddress('');
+        setErrors({});
     }, 300);
   };
 
@@ -62,9 +85,23 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
-            <h2 className="text-xl font-bold text-dark">
-                {step === 'cart' ? 'Shopping Cart' : step === 'checkout' ? 'Checkout' : 'Order Complete'}
-            </h2>
+            <div className="flex items-center gap-3">
+               <h2 className="text-xl font-bold text-dark">
+                  {step === 'cart' ? 'Shopping Cart' : step === 'checkout' ? 'Checkout' : 'Order Complete'}
+               </h2>
+               {step === 'cart' && items.length > 0 && onClearCart && (
+                  <button 
+                      onClick={() => {
+                        if(window.confirm('Clear all items from cart?')) {
+                          onClearCart();
+                        }
+                      }}
+                      className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                      Clear
+                  </button>
+               )}
+            </div>
             <button onClick={handleClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
               <X size={24} />
             </button>
@@ -141,8 +178,25 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Shipping Address</h3>
                     <div className="space-y-3">
-                        <input type="text" placeholder="Full Name" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-primary text-sm" />
-                        <textarea placeholder="Address (Street, City, Zip)" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-primary text-sm h-24 resize-none" />
+                        <div>
+                          <input 
+                            type="text" 
+                            placeholder="Full Name" 
+                            value={shippingName}
+                            onChange={(e) => setShippingName(e.target.value)}
+                            className={`w-full p-3 bg-gray-50 rounded-lg border focus:outline-none focus:border-primary text-sm ${errors.name ? 'border-red-500' : 'border-gray-200'}`} 
+                          />
+                          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                        </div>
+                        <div>
+                          <textarea 
+                            placeholder="Address (Street, City, Zip)" 
+                            value={shippingAddress}
+                            onChange={(e) => setShippingAddress(e.target.value)}
+                            className={`w-full p-3 bg-gray-50 rounded-lg border focus:outline-none focus:border-primary text-sm h-24 resize-none ${errors.address ? 'border-red-500' : 'border-gray-200'}`} 
+                          />
+                          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+                        </div>
                     </div>
                 </div>
               </div>
@@ -157,12 +211,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     <p className="text-gray-500 max-w-xs">Your order has been placed successfully. You will receive a confirmation email shortly.</p>
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 w-full max-w-xs mt-4">
                         <div className="flex justify-between text-sm mb-2">
-                            <span className="text-gray-500">Order ID</span>
-                            <span className="font-mono font-bold">#SR-{Math.floor(Math.random() * 10000)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Amount</span>
                             <span className="font-bold text-primary">฿{total.toLocaleString()}</span>
+                        </div>
+                         <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">Ship To</span>
+                            <span className="font-bold text-dark">{shippingName}</span>
                         </div>
                     </div>
                 </div>

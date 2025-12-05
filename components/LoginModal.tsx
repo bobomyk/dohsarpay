@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Lock, User, Mail, ArrowRight, LogIn } from 'lucide-react';
-import { User as UserType } from '../types';
+import { User as UserType } from '../types.ts';
 
 interface LoginModalProps {
   isOpen: boolean;

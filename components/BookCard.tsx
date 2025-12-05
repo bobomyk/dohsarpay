@@ -1,5 +1,5 @@
 import React from 'react';
-import { Book } from '../types';
+import { Book } from '../types.ts';
 import { Star, Plus, Pencil, Trash2 } from 'lucide-react';
 
 interface BookCardProps {

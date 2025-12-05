@@ -1,6 +1,6 @@
 import React from 'react';
-import { Book } from '../types';
-import { BookCard } from './BookCard';
+import { Book } from '../types.ts';
+import { BookCard } from './BookCard.tsx';
 
 interface AutoScrollBookListProps {
   books: Book[];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Book, Review } from '../types';
+import { Book, Review } from '../types.ts';
 import { ArrowLeft, Star, ShoppingBag, Share2, Heart, User, Send, ChevronDown, ChevronUp, BookOpen, X, Pencil, Trash2 } from 'lucide-react';
-import { BookCard } from './BookCard';
+import { BookCard } from './BookCard.tsx';
 
 const MOCK_REVIEWS: Review[] = [
   { id: '1', userName: 'Nadech K.', rating: 5, comment: 'Absolutely loved this book! The pacing was perfect and I couldn\'t put it down.', date: '2023-10-15' },

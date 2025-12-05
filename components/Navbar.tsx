@@ -1,6 +1,6 @@
 import React from 'react';
-import { Home, ShoppingBag, User, Search, LayoutGrid, BookOpen, LogOut, ShieldCheck } from 'lucide-react';
-import { User as UserType } from '../types';
+import { Home, ShoppingBag, User, Search, LayoutGrid, BookOpen, LogOut, ShieldCheck, LayoutDashboard } from 'lucide-react';
+import { User as UserType } from '../types.ts';
 
 interface NavbarProps {
   cartCount: number;
@@ -10,10 +10,11 @@ interface NavbarProps {
   onLoginClick: () => void;
   currentUser: UserType | null;
   onLogout: () => void;
+  onOpenAdminDashboard: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
-  cartCount, onOpenCart, onHomeClick, onOpenCategories, onLoginClick, currentUser, onLogout 
+  cartCount, onOpenCart, onHomeClick, onOpenCategories, onLoginClick, currentUser, onLogout, onOpenAdminDashboard
 }) => {
   const isAdmin = currentUser?.role === 'admin';
 
@@ -57,6 +58,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Requested Order: 1. Categories, 2. Cart, 3. Profile/Admin */}
             <div className="flex items-center gap-4">
+              
+              {/* Admin Dashboard Button */}
+              {isAdmin && (
+                <button
+                  onClick={onOpenAdminDashboard}
+                  className="px-3 py-2 bg-gray-100 text-dark rounded-full font-bold text-xs flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                >
+                    <LayoutDashboard size={16} />
+                    Dashboard
+                </button>
+              )}
+
               <button 
                 onClick={onOpenCategories}
                 className="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-full transition-colors flex flex-col items-center gap-1"
@@ -155,6 +168,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <LayoutGrid size={24} />
             <span className="text-[10px] font-medium">Categories</span>
           </button>
+          
+          {isAdmin && (
+            <button 
+                onClick={onOpenAdminDashboard}
+                className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-primary space-y-1"
+            >
+                <LayoutDashboard size={24} />
+                <span className="text-[10px] font-medium">Admin</span>
+            </button>
+          )}
 
           <button 
             onClick={onOpenCart}

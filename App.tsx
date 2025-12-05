@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
-import { BookCard, BookCardSkeleton } from './components/BookCard';
-import { AutoScrollBookList } from './components/AutoScrollBookList';
-import { CartDrawer } from './components/CartDrawer';
-import { CategoryDrawer } from './components/CategoryDrawer';
-import { ChatBot } from './components/ChatBot';
-import { BookDetails } from './components/BookDetails';
-import { LoginModal } from './components/LoginModal';
-import { AdminBookForm } from './components/AdminBookForm';
-import { Book, CartItem, User } from './types';
+import { Navbar } from './components/Navbar.tsx';
+import { BookCard, BookCardSkeleton } from './components/BookCard.tsx';
+import { AutoScrollBookList } from './components/AutoScrollBookList.tsx';
+import { CartDrawer } from './components/CartDrawer.tsx';
+import { CategoryDrawer } from './components/CategoryDrawer.tsx';
+import { ChatBot } from './components/ChatBot.tsx';
+import { BookDetails } from './components/BookDetails.tsx';
+import { LoginModal } from './components/LoginModal.tsx';
+import { AdminBookForm } from './components/AdminBookForm.tsx';
+import { AdminDashboard } from './components/AdminDashboard.tsx';
+import { Book, CartItem, User, Order } from './types.ts';
 import { Plus, Sparkles, ArrowRight, Flame } from 'lucide-react';
 
 // Mock Data (Initial State) - Burmese Books with Curated Covers
@@ -186,7 +187,86 @@ const INITIAL_USERS: User[] = [
     name: 'System Administrator',
     role: 'admin',
     email: 'admin@dohsarpay.com'
+  },
+  {
+    id: 'user-1',
+    username: 'john',
+    password: 'password',
+    name: 'John Doe',
+    role: 'user',
+    email: 'john@gmail.com'
+  },
+   {
+    id: 'user-2',
+    username: 'sarah',
+    password: 'password',
+    name: 'Sarah Smith',
+    role: 'user',
+    email: 'sarah@yahoo.com'
   }
+];
+
+const INITIAL_ORDERS: Order[] = [
+    { 
+      id: 'ORD-8823', 
+      userId: 'user-1', 
+      userName: 'John Doe', 
+      shippingName: 'John Doe', 
+      shippingAddress: '123 Sule Pagoda Road, Yangon, 11181',
+      date: '2023-11-15', 
+      total: 4500, 
+      status: 'completed', 
+      items: 2, 
+      paymentMethod: 'PromptPay' 
+    },
+    { 
+      id: 'ORD-8824', 
+      userId: 'user-2', 
+      userName: 'Sarah Smith', 
+      shippingName: 'Sarah Smith',
+      shippingAddress: '45 Mandalay Palace St, Mandalay',
+      date: '2023-11-16', 
+      total: 12000, 
+      status: 'completed', 
+      items: 1, 
+      paymentMethod: 'Credit Card' 
+    },
+    { 
+      id: 'ORD-8825', 
+      userId: 'user-1', 
+      userName: 'John Doe', 
+      shippingName: 'John Doe',
+      shippingAddress: '123 Sule Pagoda Road, Yangon, 11181',
+      date: '2023-11-18', 
+      total: 2500, 
+      status: 'pending', 
+      items: 1, 
+      paymentMethod: 'COD' 
+    },
+    { 
+      id: 'ORD-8826', 
+      userId: 'guest', 
+      userName: 'Guest User', 
+      shippingName: 'Maung Maung',
+      shippingAddress: '78 Inya Lake, Yangon',
+      date: '2023-11-19', 
+      total: 8500, 
+      status: 'cancelled', 
+      items: 1, 
+      paymentMethod: 'PromptPay' 
+    },
+    { 
+      id: 'ORD-8827', 
+      userId: 'user-2', 
+      userName: 'Sarah Smith', 
+      shippingName: 'Sarah Smith',
+      shippingAddress: '45 Mandalay Palace St, Mandalay',
+      date: '2023-11-20', 
+      total: 6000, 
+      status: 'completed', 
+      items: 3, 
+      paymentMethod: 'TrueMoney' 
+    },
 ];
 
 function App() {
@@ -206,11 +286,15 @@ function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
+  // Data State
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+
   // Derived Admin State
   const isAdmin = currentUser?.role === 'admin';
 
   // Admin Book Form State
   const [isAdminFormOpen, setIsAdminFormOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
   // Categories based on Pann Satt Lann style bookstore
@@ -314,6 +398,29 @@ function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setIsDashboardOpen(false); // Close dashboard on logout
+  };
+
+  // Order Functions
+  const handlePlaceOrder = (details: { name: string; address: string; paymentMethod: string }) => {
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const itemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const newOrder: Order = {
+      id: `ORD-${Math.floor(Math.random() * 10000)}`,
+      userId: currentUser?.id || 'guest',
+      userName: currentUser?.name || 'Guest User',
+      shippingName: details.name,
+      shippingAddress: details.address,
+      date: new Date().toISOString().split('T')[0],
+      total: total,
+      status: 'pending',
+      items: itemsCount,
+      paymentMethod: details.paymentMethod
+    };
+
+    setOrders(prev => [newOrder, ...prev]);
+    clearCart();
   };
 
   // Admin Functions
@@ -384,6 +491,7 @@ function App() {
         onLoginClick={() => setIsLoginModalOpen(true)}
         currentUser={currentUser}
         onLogout={handleLogout}
+        onOpenAdminDashboard={() => setIsDashboardOpen(true)}
       />
 
       <main className="">
@@ -540,6 +648,7 @@ function App() {
         items={cartItems}
         onRemoveItem={removeFromCart}
         onUpdateQuantity={updateQuantity}
+        onPlaceOrder={handlePlaceOrder}
         onClearCart={clearCart}
       />
 
@@ -566,6 +675,17 @@ function App() {
         initialData={editingBook}
         categories={categories}
         onDelete={handleDeleteBook}
+      />
+
+      <AdminDashboard 
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
+        books={books}
+        users={users}
+        orders={orders}
+        onEditBook={handleEditBook}
+        onDeleteBook={handleDeleteBook}
+        onCreateBook={handleCreateBook}
       />
 
       {/* Hide ChatBot on mobile details page to prevent clutter, show otherwise */}

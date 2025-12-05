@@ -1,8 +1,10 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+import { ChatMessage } from '../types.ts';
 
 // Initialize the API client
 // Note: In a real production app, ensure strict backend proxying for keys.
 // Here we use the environment variable as per instructions.
+// The index.html shim ensures process.env is available globally in the browser.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // System instruction to guide the persona

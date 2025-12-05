@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Image as ImageIcon, Save, Plus, Trash2 } from 'lucide-react';
-import { Book } from '../types';
+import { Book } from '../types.ts';
 
 interface AdminBookFormProps {
   isOpen: boolean;
