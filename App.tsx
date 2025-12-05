@@ -11,120 +11,142 @@ import { AdminBookForm } from './components/AdminBookForm';
 import { Book, CartItem } from './types';
 import { Plus } from 'lucide-react';
 
-// Mock Data (Initial State)
+// Mock Data (Initial State) - Burmese Books with Curated Covers
 const INITIAL_BOOKS: Book[] = [
   {
     id: 1,
-    title: "The Art of Thai Cooking",
-    author: "Somsri Chef",
-    price: 450,
-    category: "Health & Cooking",
-    rating: 4.8,
-    coverUrl: "https://picsum.photos/300/450?random=10",
-    description: "Authentic recipes from the heart of Thailand. Learn to balance the four fundamental tastes: sweet, sour, salty, and spicy. Includes 50 classic recipes and stories from local street food vendors.",
-    authorBio: "Somsri Chef grew up in the bustling markets of Chiang Mai, learning the secrets of Thai cuisine from her grandmother. With over 20 years of experience running one of Bangkok's most beloved street food stalls, she is passionate about preserving traditional flavors.",
+    title: "Linga Dipa Chit Thu",
+    author: "Chit Oo Nyo",
+    price: 4500,
+    category: "Novels & Fiction",
+    rating: 4.9,
+    coverUrl: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A legendary historical novel retelling the Ramayana from the perspective of Ravana (Dasagiri). It explores deep emotions, love, and the complexity of the villain's heart.",
+    authorBio: "Chit Oo Nyo is a celebrated Burmese writer known for his historical fiction. He brings ancient characters to life with modern psychological depth.",
     previewPages: [
-      "https://placehold.co/400x600/FFF/000?text=Page+1:+Introduction",
-      "https://placehold.co/400x600/FFF/000?text=Page+2:+Ingredients",
-      "https://placehold.co/400x600/FFF/000?text=Page+3:+Tom+Yum+Recipe"
+      "https://placehold.co/400x600/FFF/000?text=Chapter+1:+Dasagiri's+Heart",
+      "https://placehold.co/400x600/FFF/000?text=Chapter+2:+The+Lanka+Kingdom",
+      "https://placehold.co/400x600/FFF/000?text=Chapter+3:+Sita"
     ]
   },
   {
     id: 2,
-    title: "Bangkok Noir",
-    author: "Various Authors",
-    price: 320,
+    title: "Mone Ywe Ma Hu (Not Out of Hate)",
+    author: "Journal Kyaw Ma Ma Lay",
+    price: 3500,
     category: "Novels & Fiction",
-    rating: 4.5,
-    coverUrl: "https://picsum.photos/300/450?random=11",
-    description: "Dark stories from the city of angels. An anthology of 12 short stories set in Bangkok, exploring the darker side of this vibrant metropolis.",
-    authorBio: "A curated collective of Thailand's finest crime and mystery writers, alongside international authors who have called Bangkok their home. This anthology represents the gritty, neon-lit underbelly of the City of Angels.",
+    rating: 4.8,
+    coverUrl: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A classic Burmese novel depicting the cultural clash between traditional Burmese values and Western influence during the colonial era through a heartbreaking marriage.",
+    authorBio: "Journal Kyaw Ma Ma Lay was one of the greatest Burmese female writers of the 20th century. Her works often focus on the struggles of women and Burmese culture.",
     previewPages: [
-      "https://placehold.co/400x600/333/FFF?text=Chapter+1:+Night+in+Sukhumvit",
-      "https://placehold.co/400x600/333/FFF?text=Chapter+1:+Continued",
-      "https://placehold.co/400x600/333/FFF?text=Illustration"
+      "https://placehold.co/400x600/FFF/000?text=Introduction",
+      "https://placehold.co/400x600/FFF/000?text=Chapter+1:+The+Merchant",
+      "https://placehold.co/400x600/FFF/000?text=Chapter+2:+Way+Way"
     ]
   },
   {
     id: 3,
-    title: "Start With Why",
-    author: "Simon Sinek",
-    price: 395,
-    category: "Business & Management",
-    rating: 4.9,
-    coverUrl: "https://picsum.photos/300/450?random=12",
-    description: "How great leaders inspire everyone to take action. Sinek argues that people don't buy what you do, they buy why you do it.",
-    authorBio: "Simon Sinek is an unwavering optimist. He teaches leaders and organizations how to inspire people. From members of Congress to foreign ambassadors, from small business owners to corporations like Microsoft and 3M, he has presented his ideas to people who have the power to change the world.",
+    title: "The Glass Palace",
+    author: "Amitav Ghosh",
+    price: 12000,
+    category: "History & Politics",
+    rating: 4.7,
+    coverUrl: "https://images.unsplash.com/photo-1599579085896-12683930b2c1?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "An epic saga spanning a century, from the fall of the Konbaung Dynasty in Mandalay to modern times, weaving together the history of Burma, India, and Malaya.",
+    authorBio: "Amitav Ghosh is an internationally acclaimed author. The Glass Palace is widely regarded as a masterpiece of historical fiction centered on Myanmar.",
     previewPages: [
-      "https://placehold.co/400x600/FFF/000?text=Preface:+The+Golden+Circle",
-      "https://placehold.co/400x600/FFF/000?text=Chapter+1:+Assume+You+Know",
-      "https://placehold.co/400x600/FFF/000?text=Diagram:+Why+How+What"
+      "https://placehold.co/400x600/FFF/000?text=Prologue:+Mandalay",
+      "https://placehold.co/400x600/FFF/000?text=Chapter+1:+Rajkumar",
+      "https://placehold.co/400x600/FFF/000?text=Map+of+Burma"
     ]
   },
   {
     id: 4,
-    title: "Jujutsu Kaisen Vol. 20",
-    author: "Gege Akutami",
-    price: 125,
-    category: "Comics & Manga",
-    rating: 5.0,
-    coverUrl: "https://picsum.photos/300/450?random=13",
-    description: "The latest volume of the hit supernatural action manga. Yuji Itadori and his friends continue their battle against the curses in the Culling Game.",
-    authorBio: "Gege Akutami is a Japanese manga artist, best known for creating Jujutsu Kaisen. Known for their unique art style and complex power systems, Akutami has become one of the most influential figures in modern shonen manga.",
+    title: "Burmese Traditional Snacks",
+    author: "Daw Yi Yi",
+    price: 2500,
+    category: "Health & Cooking",
+    rating: 4.5,
+    coverUrl: "https://images.unsplash.com/photo-1601342630318-7c631a31dc52?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "Learn to make classic Myanmar snacks like Mohinga, Lahpet Thoke, and Shwe Yin Aye. A complete guide to the tastes of the Golden Land.",
+    authorBio: "Daw Yi Yi has dedicated her life to documenting grandmothers' recipes from across the Ayeyarwady region.",
     previewPages: [
-      "https://placehold.co/400x600/FFF/000?text=Manga+Panel+1",
-      "https://placehold.co/400x600/FFF/000?text=Manga+Panel+2",
-      "https://placehold.co/400x600/FFF/000?text=Manga+Panel+3"
+      "https://placehold.co/400x600/FFF/000?text=Recipe:+Mohinga",
+      "https://placehold.co/400x600/FFF/000?text=Recipe:+Coconut+Noodles",
+      "https://placehold.co/400x600/FFF/000?text=Ingredients+Guide"
     ]
   },
   {
     id: 5,
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 420,
-    category: "Self-Improvement",
-    rating: 4.9,
-    coverUrl: "https://picsum.photos/300/450?random=14",
-    description: "Tiny Changes, Remarkable Results. An easy and proven way to build good habits and break bad ones.",
-    authorBio: "James Clear is a writer and speaker focused on habits, decision-making, and continuous improvement. His work has appeared in The New York Times, Entrepreneur, Time, and on CBS This Morning.",
+    title: "Dhammapada Verses",
+    author: "Ashin Janakabhivamsa",
+    price: 1500,
+    category: "Religion & Dhamma",
+    rating: 5.0,
+    coverUrl: "https://images.unsplash.com/photo-1621845199651-7f4c519543e9?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A collection of sayings of the Buddha in verse form and one of the most widely read and best known Buddhist scriptures.",
+    authorBio: "Ashin Janakabhivamsa was a renowned Burmese Buddhist monk and writer who helped spread the teachings of Theravada Buddhism.",
     previewPages: [
-      "https://placehold.co/400x600/FFF/000?text=Introduction",
-      "https://placehold.co/400x600/FFF/000?text=The+Fundamentals",
-      "https://placehold.co/400x600/FFF/000?text=Chart:+1%25+Better"
+      "https://placehold.co/400x600/FFF/000?text=Verse+1",
+      "https://placehold.co/400x600/FFF/000?text=Verse+2",
+      "https://placehold.co/400x600/FFF/000?text=Explanation"
     ]
   },
   {
     id: 6,
-    title: "Thai For Beginners",
-    author: "Benjawan Poomsan",
-    price: 550,
-    category: "Education & Language",
+    title: "Myanmar Folktales",
+    author: "Maung Htin Aung",
+    price: 3000,
+    category: "Children",
     rating: 4.6,
-    coverUrl: "https://picsum.photos/300/450?random=15",
-    description: "The best way to start learning Thai. Covers basic grammar, vocabulary, and conversation skills for travelers and expats.",
-    authorBio: "Benjawan Poomsan Becker is a leading author of Thai language learning materials for English speakers. Born in Bangkok and raised in Yasothon, she has dedicated her career to making the Thai language accessible to the world."
+    coverUrl: "https://images.unsplash.com/photo-1629196914375-f7e48f477b6d?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A delightful collection of traditional folktales from the villages of Myanmar. Perfect for children and adults who love storytelling.",
+    authorBio: "Maung Htin Aung was a scholar and writer who preserved many oral traditions of Myanmar through his English translations.",
   },
    {
     id: 7,
-    title: "Design Systems",
-    author: "Alla Kholmatova",
-    price: 850,
-    category: "Art & Design",
-    rating: 4.7,
-    coverUrl: "https://picsum.photos/300/450?random=16",
-    description: "A practical guide to creating design languages for digital products. Learn how to build and maintain effective design systems.",
-    authorBio: "Alla Kholmatova is a UX researcher and designer who has spent years studying what makes design systems effective. She has helped numerous companies streamline their design processes and improve collaboration between designers and developers."
+    title: "From The Land of Green Ghosts",
+    author: "Pascal Khoo Thwe",
+    price: 8500,
+    category: "Biographies",
+    rating: 4.8,
+    coverUrl: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A memoir of coming of age in Burma. A powerful story of a young Padaung man's journey from a remote village to Cambridge University.",
+    authorBio: "Pascal Khoo Thwe is a Burmese author from the Padaung tribe. His memoir has won international acclaim for its lyrical prose and historical insight."
   },
   {
     id: 8,
-    title: "One Piece Vol. 105",
-    author: "Eiichiro Oda",
-    price: 115,
-    category: "Comics & Manga",
-    rating: 5.0,
-    coverUrl: "https://picsum.photos/300/450?random=17",
-    description: "Join Luffy on his journey to become King of the Pirates. The Straw Hat crew continues their adventure in the New World.",
-    authorBio: "Eiichiro Oda is a legendary Japanese manga artist and the creator of One Piece. With over 500 million copies sold worldwide, he holds the Guinness World Record for the most copies published for the same comic book series by a single author."
+    title: "Pyi Min Thar",
+    author: "Min Theinkha",
+    price: 2800,
+    category: "Novels & Fiction",
+    rating: 4.7,
+    coverUrl: "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A famous mystery and astrology novel by Min Theinkha. Join the protagonist in a world of mystical Burmese arts and suspense.",
+    authorBio: "Min Theinkha was a prolific writer and astrologer, famous for his detective novels and books on Burmese astrology."
+  },
+  {
+    id: 9,
+    title: "Architecture of Bagan",
+    author: "History Dept",
+    price: 15000,
+    category: "Art & Design",
+    rating: 4.9,
+    coverUrl: "https://images.unsplash.com/photo-1552554622-6b39df280c44?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "A visual journey through the thousands of temples in Bagan. Includes architectural diagrams, history, and photography.",
+    authorBio: "Compiled by leading historians and architects specializing in Southeast Asian archeology."
+  },
+  {
+    id: 10,
+    title: "General Knowledge 2024",
+    author: "Mg Mg",
+    price: 2000,
+    category: "General Knowledge",
+    rating: 4.2,
+    coverUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "Essential general knowledge for students and exam preparation in Myanmar. Covers geography, history, and current events.",
+    authorBio: "Mg Mg is a dedicated educator creating accessible learning materials for Myanmar students."
   }
 ];
 
@@ -314,12 +336,12 @@ function App() {
         {view === 'home' && (
           <div className="animate-in fade-in duration-300">
             <Hero 
-              books={books.slice(0, 6)} // Pass dynamic books
+              books={books.slice(0, 10)} // Show up to 10 books in the trending slider
               onAddToCart={addToCart}
               onBookClick={handleBookClick}
             />
             
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 md:mt-12 mb-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-6 mb-10">
               
               <div className="flex items-center justify-between mb-6">
                 <div>
