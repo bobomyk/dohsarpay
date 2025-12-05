@@ -10,7 +10,7 @@ import { LoginModal } from './components/LoginModal.tsx';
 import { AdminBookForm } from './components/AdminBookForm.tsx';
 import { AdminDashboard } from './components/AdminDashboard.tsx';
 import { Book, CartItem, User, Order } from './types.ts';
-import { Plus, Sparkles, ArrowRight, Flame } from 'lucide-react';
+import { Plus, Sparkles, ArrowRight, Flame, ArrowUpDown } from 'lucide-react';
 
 // Mock Data (Initial State) - Burmese Books with Curated Covers
 const INITIAL_BOOKS: Book[] = [
@@ -275,6 +275,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOption, setSortOption] = useState("recommended");
   const [isLoading, setIsLoading] = useState(true);
   
   // Navigation State
@@ -471,9 +472,25 @@ function App() {
     }
   };
 
+  // Filtering & Sorting Logic
   const filteredBooks = selectedCategory === "All" 
     ? books 
     : books.filter(b => b.category === selectedCategory);
+
+  const sortedBooks = [...filteredBooks].sort((a, b) => {
+    switch (sortOption) {
+      case 'price_asc':
+        return a.price - b.price;
+      case 'price_desc':
+        return b.price - a.price;
+      case 'rating':
+        return b.rating - a.rating;
+      case 'title':
+        return a.title.localeCompare(b.title);
+      default: // 'recommended'
+        return 0; // Default order (usually id or added order)
+    }
+  });
 
   // New Books Logic (Take the last 6 books for the carousel)
   const newArrivals = [...books].reverse().slice(0, 8);
@@ -564,7 +581,7 @@ function App() {
             {/* MAIN RECOMMENDATION GRID */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-6 mb-10">
               
-              <div className="flex items-center justify-between mb-6 border-t border-gray-100 pt-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 border-t border-gray-100 pt-8 gap-4">
                 <div>
                     <h2 className="text-xl md:text-2xl font-bold text-dark">
                         {selectedCategory === "All" ? "Recommended For You" : selectedCategory}
@@ -573,14 +590,38 @@ function App() {
                         {selectedCategory === "All" ? "Best selling books of the month" : `Browse our ${selectedCategory} collection`}
                     </p>
                 </div>
-                {selectedCategory !== "All" && (
-                    <button 
-                        onClick={() => setSelectedCategory("All")}
-                        className="text-primary font-bold text-sm hover:underline"
-                    >
-                        View All
-                    </button>
-                )}
+                
+                <div className="flex items-center gap-4 flex-wrap">
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                         <span className="text-sm text-gray-500 font-medium whitespace-nowrap">Sort by:</span>
+                         <div className="relative">
+                            <select
+                                value={sortOption}
+                                onChange={(e) => setSortOption(e.target.value)}
+                                className="appearance-none bg-gray-50 border border-gray-200 text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-3 pr-8 py-2 outline-none font-medium cursor-pointer"
+                            >
+                                <option value="recommended">Recommended</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="rating">Top Rated</option>
+                                <option value="title">Name: A-Z</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                                <ArrowUpDown size={14} />
+                            </div>
+                         </div>
+                    </div>
+
+                    {selectedCategory !== "All" && (
+                        <button 
+                            onClick={() => setSelectedCategory("All")}
+                            className="text-primary font-bold text-sm hover:underline whitespace-nowrap"
+                        >
+                            View All
+                        </button>
+                    )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
@@ -588,8 +629,8 @@ function App() {
                   ? Array.from({ length: 8 }).map((_, idx) => (
                       <BookCardSkeleton key={idx} />
                     ))
-                  : filteredBooks.length > 0 ? (
-                      filteredBooks.map(book => (
+                  : sortedBooks.length > 0 ? (
+                      sortedBooks.map(book => (
                         <BookCard 
                           key={book.id} 
                           book={book} 
