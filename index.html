@@ -17,6 +17,15 @@
               primary: '#E63946', // Vibrant Imperial Red (Motivates action/buying)
               secondary: '#457B9D', // Steel Blue (Trust and calmness)
               dark: '#1D3557', // Prussian Blue (Premium, deep text color)
+            },
+            animation: {
+              scroll: 'scroll 40s linear infinite',
+            },
+            keyframes: {
+              scroll: {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-50%)' },
+              }
             }
           }
         }
@@ -37,6 +46,14 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8; 
         }
+        /* Hide scrollbar for clean carousel */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
     </style>
   <script type="importmap">
 {
@@ -52,7 +69,5 @@
 </head>
   <body class="bg-gray-50 text-dark antialiased selection:bg-primary selection:text-white">
     <div id="root"></div>
-    
-    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

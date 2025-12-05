@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
 import { BookCard, BookCardSkeleton } from './components/BookCard';
+import { AutoScrollBookList } from './components/AutoScrollBookList';
 import { CartDrawer } from './components/CartDrawer';
 import { CategoryDrawer } from './components/CategoryDrawer';
 import { ChatBot } from './components/ChatBot';
@@ -9,7 +9,7 @@ import { BookDetails } from './components/BookDetails';
 import { LoginModal } from './components/LoginModal';
 import { AdminBookForm } from './components/AdminBookForm';
 import { Book, CartItem, User } from './types';
-import { Plus } from 'lucide-react';
+import { Plus, Sparkles, ArrowRight, Flame } from 'lucide-react';
 
 // Mock Data (Initial State) - Burmese Books with Curated Covers
 const INITIAL_BOOKS: Book[] = [
@@ -147,6 +147,28 @@ const INITIAL_BOOKS: Book[] = [
     coverUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=300&h=450",
     description: "Essential general knowledge for students and exam preparation in Myanmar. Covers geography, history, and current events.",
     authorBio: "Mg Mg is a dedicated educator creating accessible learning materials for Myanmar students."
+  },
+  {
+    id: 11,
+    title: "The Lizard Cage",
+    author: "Karen Connelly",
+    price: 5500,
+    category: "Novels & Fiction",
+    rating: 4.6,
+    coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "Set in a Burmese prison, this powerful novel tells the story of Teza, a singer imprisoned for his protest songs, and the boy who brings him food.",
+    authorBio: "Karen Connelly is a Canadian writer who spent time on the Thai-Burmese border."
+  },
+  {
+    id: 12,
+    title: "Miss Burma",
+    author: "Charmaine Craig",
+    price: 6200,
+    category: "History & Politics",
+    rating: 4.7,
+    coverUrl: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&q=80&w=300&h=450",
+    description: "Based on the story of the author's mother and grandparents, this novel recounts the history of modern Burma through the Karen ethnic minority struggle.",
+    authorBio: "Charmaine Craig is a faculty member at UC Riverside and a descendant of the figures in her book."
   }
 ];
 
@@ -340,6 +362,9 @@ function App() {
     ? books 
     : books.filter(b => b.category === selectedCategory);
 
+  // New Books Logic (Take the last 6 books for the carousel)
+  const newArrivals = [...books].reverse().slice(0, 8);
+
   // Find the selected book object from state
   const selectedBook = selectedBookId ? books.find(b => b.id === selectedBookId) : null;
 
@@ -358,20 +383,79 @@ function App() {
       <main className="">
         {view === 'home' && (
           <div className="animate-in fade-in duration-300">
-            <Hero 
-              books={books.slice(0, 10)} // Show up to 10 books in the trending slider
-              onAddToCart={addToCart}
-              onBookClick={handleBookClick}
-            />
+            {/* TRENDING NOW SECTION - Auto Scrolling Marquee */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 bg-red-50 text-primary rounded-lg">
+                      <Flame size={18} fill="currentColor" />
+                  </div>
+                  <h2 className="text-lg md:text-xl font-bold text-dark tracking-tight">
+                    Trending Now
+                  </h2>
+              </div>
+              
+              <div className="-mx-4 md:mx-0">
+                  <AutoScrollBookList 
+                    books={books.slice(0, 10)} 
+                    onAddToCart={addToCart}
+                    onBookClick={handleBookClick}
+                    isAdmin={isAdmin}
+                    onEdit={handleEditBook}
+                    onDelete={handleDeleteBook}
+                  />
+              </div>
+            </div>
+
+            {/* NEW ARRIVALS SECTION - Auto Scrolling Marquee */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                        <Sparkles size={18} fill="currentColor" />
+                    </div>
+                    <h2 className="text-lg md:text-xl font-bold text-dark tracking-tight">
+                      New Books
+                    </h2>
+                </div>
+                <button 
+                  onClick={() => setSelectedCategory("All")}
+                  className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                >
+                  View All <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {isLoading ? (
+                 <div className="flex gap-4 overflow-hidden">
+                   {Array.from({ length: 4 }).map((_, idx) => (
+                      <div key={idx} className="w-[150px] md:w-[180px] shrink-0">
+                         <BookCardSkeleton />
+                      </div>
+                   ))}
+                 </div>
+              ) : (
+                 <div className="-mx-4 md:mx-0">
+                    <AutoScrollBookList 
+                      books={newArrivals}
+                      onAddToCart={addToCart}
+                      onBookClick={handleBookClick}
+                      isAdmin={isAdmin}
+                      onEdit={handleEditBook}
+                      onDelete={handleDeleteBook}
+                    />
+                 </div>
+              )}
+            </div>
             
+            {/* MAIN RECOMMENDATION GRID */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-6 mb-10">
               
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 border-t border-gray-100 pt-8">
                 <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-dark">
+                    <h2 className="text-xl md:text-2xl font-bold text-dark">
                         {selectedCategory === "All" ? "Recommended For You" : selectedCategory}
                     </h2>
-                    <p className="text-gray-500 mt-1">
+                    <p className="text-gray-500 mt-1 text-sm md:text-base">
                         {selectedCategory === "All" ? "Best selling books of the month" : `Browse our ${selectedCategory} collection`}
                     </p>
                 </div>
@@ -475,6 +559,7 @@ function App() {
         onSubmit={handleSubmitBook}
         initialData={editingBook}
         categories={categories}
+        onDelete={handleDeleteBook}
       />
 
       {/* Hide ChatBot on mobile details page to prevent clutter, show otherwise */}
